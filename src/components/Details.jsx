@@ -8,7 +8,7 @@ export default function Details() {
         [DevTools] Improve named hooks detection <span>#21782</span>
       </h2>
       <div class="issue-details">
-        <a href="">bvaughn</a> opened this issue 6 days ago
+        <a href="">bvaughn</a> opened this issue 6 days agoo
       </div>
 
       <div className="comment-container">
