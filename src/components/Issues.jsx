@@ -1,3 +1,4 @@
+import { formatDistance } from "date-fns";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import { Link } from "react-router-dom";
@@ -14,9 +15,31 @@ function App() {
     data: issues,
   } = useQuery(["issues", filter], fetchIssues);
 
+  const { isSuccess: isSuccessIssuesOpen, data: issuesOpen } = useQuery(
+    "issuesOpen",
+    fetchIssuesOpen
+  );
+
+  const { isSuccess: isSuccessIssuesClosed, data: issuesClosed } = useQuery(
+    "issuesClosed",
+    fetchIssuesClosed
+  );
+
   function fetchIssues() {
     return fetch(
       `https://api.github.com/repos/facebook/create-react-app/issues?per_page=10&state=${filter}`
+    ).then(response => response.json());
+  }
+
+  function fetchIssuesOpen() {
+    return fetch(
+      `https://api.github.com/search/issues?q=repo:facebook/create-react-app+type:issue+state:open&per_page=1`
+    ).then(response => response.json());
+  }
+
+  function fetchIssuesClosed() {
+    return fetch(
+      `https://api.github.com/search/issues?q=repo:facebook/create-react-app+type:issue+state:closed&per_page=1`
     ).then(response => response.json());
   }
 
@@ -32,14 +55,18 @@ function App() {
               <button onClick={() => setFilter("open")}>
                 <IconOpen />
                 <span className={filter === "open" ? "font-bold" : ""}>
-                  96 Open
+                  {isSuccessIssuesOpen && (
+                    <span>{issuesOpen.total_count} Open</span>
+                  )}
                 </span>
               </button>
               <button onClick={() => setFilter("closed")}>
                 <IconClose />
                 <span className={filter === "closed" ? "font-bold" : ""}>
                   {/* above line makes font bold when user is on it calling a css class  */}
-                  254 Closed
+                  {isSuccessIssuesClosed && (
+                    <span>{issuesClosed.total_count} Closed</span>
+                  )}
                 </span>
               </button>
             </div>
@@ -54,7 +81,12 @@ function App() {
                   <div className="issues-title">
                     <Link to={`/issues/1`}>{issue.title}</Link>
                     <div className="issues-title-details">
-                      #{issue.number} opened 10 hours ago by {issue.user.login}
+                      {/* The data .number .title and .total_count etc is info we get from the data from the dev tools in githubs api */}
+                      #{issue.number} opened{" "}
+                      {formatDistance(new Date(issue.created_at), new Date(), {
+                        addSuffix: true,
+                      })}{" "}
+                      by {issue.user.login}
                     </div>
                   </div>
                 </div>
