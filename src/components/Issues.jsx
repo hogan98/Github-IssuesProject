@@ -79,7 +79,7 @@ function App() {
                   {issue.state === "closed" && <IconClose />}
 
                   <div className="issues-title">
-                    <Link to={`/issues/1`}>{issue.title}</Link>
+                    <Link to={`/issues/${issue.number}`}>{issue.title}</Link>
                     <div className="issues-title-details">
                       {/* The data .number .title and .total_count etc is info we get from the data from the dev tools in githubs api */}
                       #{issue.number} opened{" "}
@@ -91,7 +91,10 @@ function App() {
                   </div>
                 </div>
                 {issue.comments > 0 && (
-                  <Link to={`issues/1`} className="comments-count-container">
+                  <Link
+                    to={`issues/${issue.number}`}
+                    className="comments-count-container"
+                  >
                     <svg
                       className="octicon octicon-comment v-align-middle"
                       viewBox="0 0 16 16"
