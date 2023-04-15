@@ -1,10 +1,9 @@
 import { formatDistance } from "date-fns";
 import React from "react";
+import ReactMarkdown from "react-markdown";
 import { useQuery } from "react-query";
 
 export default function Comments({ issueNumber }) {
-  const fakeArray = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-
   const {
     isLoading,
     isSuccess,
@@ -13,9 +12,10 @@ export default function Comments({ issueNumber }) {
 
   function fetchComments() {
     return fetch(
-      `https://api.github.com/repos/facebook/create-react-app/issues/${issueNumber}/comments}`
+      `https://api.github.com/repos/facebook/create-react-app/issues/${issueNumber}/comments`
     ).then(response => response.json());
   }
+
   return (
     <>
       {isLoading && <div>Loading...</div>}
@@ -23,7 +23,7 @@ export default function Comments({ issueNumber }) {
         <>
           {comments.map(comment => (
             <div key={comment.id} className="comment-container">
-              <a href="#">
+              <a href={comment.user.html_url}>
                 <img
                   src={comment.user.avatar_url}
                   alt="avatar"
@@ -32,12 +32,15 @@ export default function Comments({ issueNumber }) {
               </a>
               <div className="comment">
                 <div className="comment-heading">
-                  <a href="#">{comment.user.login}</a> commented{" "}
+                  <a href={comment.user.html_url}>{comment.user.login}</a>{" "}
+                  commented{" "}
                   {formatDistance(new Date(comment.created_at), new Date(), {
                     addSuffix: true,
                   })}
                 </div>
-                <div className="comment-body">{comment.body}</div>
+                <div className="comment-body markdown-body">
+                  <ReactMarkdown children={comment.body} />
+                </div>
               </div>
             </div>
           ))}

@@ -1,5 +1,6 @@
 import { formatDistance } from "date-fns";
 import React from "react";
+import ReactMarkdown from "react-markdown";
 import { useQuery } from "react-query";
 import { useParams } from "react-router-dom";
 import Comments from "./Comments";
@@ -27,8 +28,9 @@ export default function Details() {
           <h2>
             {issue.title} <span>#{issue.number}</span>
           </h2>
-          <div class="issue-details">
-            <a href="">{issue.user.login}</a> opened this issue{" "}
+          <div className="issue-details">
+            <a href={issue.user.html_url}>{issue.user.login}</a> opened this
+            issue{" "}
             {formatDistance(new Date(issue.created_at), new Date(), {
               addSuffix: true,
             })}
@@ -38,17 +40,19 @@ export default function Details() {
 
       {isSuccess && (
         <div className="comment-container">
-          <a href="#">
+          <a href={issue.user.html_url}>
             <img src={issue.user.avatar_url} alt="avatar" className="avatar" />
           </a>
           <div className="comment">
             <div className="comment-heading">
-              <a href="#">mdaj06</a> commented{" "}
+              <a href={issue.user.html_url}>mdaj06</a> commented{" "}
               {formatDistance(new Date(issue.created_at), new Date(), {
                 addSuffix: true,
               })}
             </div>
-            <div className="comment-body">{issue.body}</div>
+            <div className="comment-body markdown-body">
+              <ReactMarkdown children={issue.body} />
+            </div>
           </div>
         </div>
       )}
